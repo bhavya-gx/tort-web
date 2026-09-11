@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tort</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header id="header">
+      <h1>Tort</h1>
+      <p>a slow little turtle who lives on your screen</p>
+    </header>
+
+    <div id="stage">
+      <div id="pet" data-state="idle">
+        <div id="bubble" aria-hidden="true"></div>
+        <div id="sprite"></div>
+        <div id="leaf"></div>
+        <div id="water"></div>
+        <div id="bubbles"></div>
+        <div id="hearts"></div>
+      </div>
+    </div>
+
+    <div id="controls">
+      <button id="btn-come">come here</button>
+      <button id="btn-speak">say something</button>
+      <div id="demo-rewards">
+        <span>demo a study reward</span>
+        <button data-tier="water">30 min</button>
+        <button data-tier="fed">60 min</button>
+        <button data-tier="clean">2 hr</button>
+      </div>
+    </div>
+
+    <footer id="footer">
+      <p>click him. drag him. double-click to make him vanish.</p>
+      <p class="small">the Mac version wires his rewards to a real study timer &middot; built by <a href="https://x.com/" target="_blank" rel="noopener">Bhavya</a></p>
+    </footer>
+
+    <script type="module" src="pet-web.js"></script>
+  </body>
+</html>
