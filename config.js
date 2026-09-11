@@ -9,7 +9,6 @@ export const MOTION = {
   height: 88,
   speed: 34,          // px per second. A turtle should look unhurried.
   edge: 8,            // px of clearance from screen edges
-  wander: [25000, 60000],
   ambient: [5 * 60000, 8 * 60000],
   blink: [2600, 7000],
   idleBeforeSleep: 12 * 60000
