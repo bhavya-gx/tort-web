@@ -27,7 +27,9 @@ const el = {
   hearts: document.getElementById('hearts'),
   leaf: document.getElementById('leaf'),
   water: document.getElementById('water'),
-  bubbles: document.getElementById('bubbles')
+  bubbles: document.getElementById('bubbles'),
+  leafTray: document.getElementById('leafTray'),
+  leafGhost: document.getElementById('leafGhost')
 }
 
 el.sprite.innerHTML = sprite
@@ -59,8 +61,11 @@ const state = {
   dragging: false,
   dragMoved: false,
   dragStartX: 0,
-  dragLastX: 0
+  dragLastX: 0,
+  leafDragging: false
 }
+
+const LEAF_TRAY = { size: 44, margin: 16 }
 
 function localDay (d = new Date()) {
   return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`
@@ -204,21 +209,12 @@ function markCare (task) {
   persist()
 }
 
-const rewardQueue = []
-let playingReward = false
-
-function queueReward (tier) {
-  rewardQueue.push(tier)
-  if (!playingReward) playNextReward()
-}
-
-async function playNextReward () {
-  const tier = rewardQueue.shift()
-  if (!tier) { playingReward = false; return }
-  playingReward = true
-  wake()
-  markCare('studied')
-
+/* The visuals for a reward tier, kept separate from what earns it. A real
+   study session (playNextReward, below) marks the daily 'studied' task on
+   top of this. Dragging the leaf onto him by hand (feedManually, further
+   down) plays the exact same 'fed' animation but never touches care state,
+   it's affection, not something he's tracking. */
+async function playTierAnimation (tier) {
   if (tier === 'water') {
     el.water.innerHTML = water
     el.water.classList.remove('gone')
@@ -255,9 +251,34 @@ async function playNextReward () {
     el.pet.classList.remove('cleaning')
     el.pet.classList.add('shiny')
   }
+}
 
+const rewardQueue = []
+let playingReward = false
+
+function queueReward (tier) {
+  rewardQueue.push(tier)
+  if (!playingReward) playNextReward()
+}
+
+async function playNextReward () {
+  const tier = rewardQueue.shift()
+  if (!tier) { playingReward = false; return }
+  playingReward = true
+  wake()
+  markCare('studied')
+  await playTierAnimation(tier)
   await wait(400)
   playNextReward()
+}
+
+/* Feeding him by hand, any time, not gated by a study session and not part
+   of the daily care checklist. Skips if a study reward is mid-animation so
+   the two never overlap on the same sprite classes. */
+async function feedManually () {
+  if (playingReward || state.paused || state.asleep || state.hidden) return
+  wake()
+  await playTierAnimation('fed')
 }
 
 const wait = (ms) => new Promise((r) => setTimeout(r, ms))
@@ -450,6 +471,40 @@ el.pet.addEventListener('click', (e) => e.stopPropagation())
 
 // Vanished for a screenshot? Any click on the stage brings him back.
 el.stage.addEventListener('click', () => { if (state.hidden) reveal() })
+
+/* ---------- feed by dragging the leaf onto him ---------- */
+
+function moveLeafGhost (x, y) {
+  const rect = el.stage.getBoundingClientRect()
+  el.leafGhost.style.transform = `translate(${x - rect.left}px, ${y - rect.top}px) translate(-50%, -50%)`
+}
+
+el.leafTray.addEventListener('mousedown', (e) => {
+  if (state.hidden) return
+  state.leafDragging = true
+  el.leafTray.classList.add('dimmed')
+  el.leafGhost.classList.add('show')
+  moveLeafGhost(e.clientX, e.clientY)
+  e.preventDefault()
+})
+
+el.stage.addEventListener('mousemove', (e) => {
+  if (!state.leafDragging) return
+  moveLeafGhost(e.clientX, e.clientY)
+})
+
+window.addEventListener('mouseup', (e) => {
+  if (!state.leafDragging) return
+  state.leafDragging = false
+  el.leafTray.classList.remove('dimmed')
+  el.leafGhost.classList.remove('show')
+  const rect = el.stage.getBoundingClientRect()
+  const dropX = e.clientX - rect.left
+  const dropY = e.clientY - rect.top
+  const top = bounds.h - HEIGHT
+  const droppedOnHim = dropX >= state.x && dropX <= state.x + WIDTH && dropY >= top && dropY <= bounds.h
+  if (droppedOnHim) feedManually()
+})
 
 /* ---------- scheduling helper ---------- */
 
