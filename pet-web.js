@@ -379,12 +379,22 @@ function vanish () {
   state.target = null
   el.pet.classList.add('hidden')
   el.bubble.classList.remove('show')
+  // The leaf goes with him. Feeding something that isn't there makes no
+  // sense, and a mid-drag leaf would otherwise hang around with nothing to
+  // drop it on.
+  el.leafTray.classList.add('hidden')
+  if (state.leafDragging) {
+    state.leafDragging = false
+    el.leafTray.classList.remove('dimmed')
+    el.leafGhost.classList.remove('show')
+  }
 }
 
 function reveal () {
   if (!state.hidden) return
   state.hidden = false
   el.pet.classList.remove('hidden')
+  el.leafTray.classList.remove('hidden')
   wake()
 }
 

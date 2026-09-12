@@ -99,6 +99,7 @@ body {
 }
 
 #pet.hidden { opacity: 0; pointer-events: none; transition: opacity 200ms ease; }
+#leafTray.hidden { opacity: 0; pointer-events: none; transition: opacity 200ms ease; }
 
 #controls {
   display: flex;
