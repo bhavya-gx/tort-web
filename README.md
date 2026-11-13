@@ -35,3 +35,10 @@ It's fully static, any of these work with zero config:
 - **GitHub Pages**: push this directory to a repo, enable Pages on it.
 
 No environment variables, no build step, no API keys.
+
+## Source
+
+- Mac app (the real thing, floats over your screen): https://github.com/bhavya-gx/tort
+- This web demo, live at https://tort-webvercelapp.vercel.app
+
+MIT licensed.
