@@ -29,13 +29,13 @@ export const LINES = {
     'small steps count.',
     'look up for a second.'
   ],
-  click: ['hi.', 'that tickles.', 'boop back.', 'oh. hello.', 'again?'],
+  click: ['more.'],
   summon: ['coming. slowly.', 'on my way.', 'yes?', 'here.'],
   wake: ['oh. hi.', 'nap over.', 'that was a good one.'],
   sleep: 'zzz',
   hello: 'hi. i live here now.',
   drink: ['ahh.', 'needed that.', 'thank you.'],
-  eat: ['yum.', 'my favourite.', 'thank you.'],
+  eat: ['this is the highlight.'],
   clean: ['ooh, bubbles.', 'shiny now.', 'that tickles.'],
   cared: 'good day. thank you.'
 }

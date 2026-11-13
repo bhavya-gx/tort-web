@@ -182,7 +182,10 @@ function celebrate () {
   wake()
   markCare('petted')
   setMode('happy')
-  say(pick(ON_CLICK), 2600)
+  // He does not talk over himself. If a bubble is already up (his hello, an
+  // affirmation), a pet just gets the hearts and stays quiet, which reads far
+  // more like an animal than a character with a line for every touch.
+  if (!el.bubble.classList.contains('show')) say(pick(ON_CLICK), 2600)
   for (let i = 0; i < 4; i++) {
     const heart = document.createElement('span')
     heart.className = 'heart'
@@ -450,7 +453,7 @@ el.pet.addEventListener('mousedown', (e) => {
   e.preventDefault() // stop native SVG/element drag-ghost
 })
 
-let lastClickAt = 0
+let clickTimer = null
 const DOUBLE_CLICK_MS = 320
 
 window.addEventListener('mouseup', () => {
@@ -462,14 +465,16 @@ window.addEventListener('mouseup', () => {
     setMode('idle')
     return
   }
-  const now = Date.now()
-  if (now - lastClickAt < DOUBLE_CLICK_MS) {
-    lastClickAt = 0
+  // A double-click is "hide him", not "pet him twice". Hold the single-click
+  // reaction for the double-click window instead of firing it immediately, so
+  // vanishing no longer flashes hearts and a line on the way out.
+  if (clickTimer) {
+    clearTimeout(clickTimer)
+    clickTimer = null
     vanish()
     return
   }
-  lastClickAt = now
-  celebrate()
+  clickTimer = setTimeout(() => { clickTimer = null; celebrate() }, DOUBLE_CLICK_MS)
 })
 
 // The native 'click' that follows this same mouseup would otherwise bubble
